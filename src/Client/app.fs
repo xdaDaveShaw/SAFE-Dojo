@@ -116,8 +116,7 @@ module ViewParts =
         basicTile "Map" [ Tile.Size Tile.Is12 ] [
             iframe [
                 Style [ Height 410; Width 810 ]
-                (* Task 3.1 MAPS: Use the getBingMapUrl function to build a valid maps URL using the supplied LatLong.
-                   You can use it to add a Src attribute to this iframe. *)
+                Src (getBingMapUrl latLong)
             ] [ ]
         ]
 
