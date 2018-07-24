@@ -37,17 +37,21 @@ type Model =
 
 /// The different types of messages in the system.
 type Msg =
+    | Clear
     | GetReport
     | PostcodeChanged of string
     | GotReport of Report
     | ErrorMsg of exn
 
-/// The init function is called to start the message pump with an initial view.
-let init () = 
+let emptyModel =
     { Postcode = null
       Report = None
       ValidationError = None
-      ServerState = Idle }, Cmd.ofMsg (PostcodeChanged "")
+      ServerState = Idle }
+
+/// The init function is called to start the message pump with an initial view.
+let init () = 
+    emptyModel, Cmd.ofMsg (PostcodeChanged "")
 
 let getResponse postcode = promise {
     let! location = Fetch.fetchAs<LocationResponse> (sprintf "/api/distance/%s" postcode) []
@@ -59,6 +63,8 @@ let getResponse postcode = promise {
 /// The update function knows how to update the model given a message.
 let update msg model =
     match model, msg with
+    | _, Clear ->
+        { model with Report = None; }, Cmd.none
     | { ValidationError = None; Postcode = postcode }, GetReport ->
         { model with ServerState = Loading }, Cmd.ofPromise getResponse postcode GotReport ErrorMsg
     | _, GetReport -> model, Cmd.none
@@ -186,7 +192,13 @@ let view model dispatch =
                                       Button.OnClick (fun _ -> dispatch GetReport)
                                       Button.Disabled (model.ValidationError.IsSome)
                                       Button.IsLoading (model.ServerState = ServerState.Loading) ]
-                                    [ str "Submit" ] ] ] ]
+                                    [ str "Submit" ] ] 
+                            Level.item [] [ 
+                                Button.button 
+                                    [ Button.IsFullwidth
+                                      Button.OnClick (fun _ -> dispatch Clear)
+                                      Button.Disabled (model.Report.IsNone) ]
+                                    [str "Clear"] ] ] ]
 
                 ]
 
