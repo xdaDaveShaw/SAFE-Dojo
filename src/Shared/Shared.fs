@@ -1,5 +1,9 @@
 namespace Shared
 
+type PostcodeRequest = {
+    Postcode : string
+}
+
 type LatLong =
     { Latitude : float
       Longitude : float }

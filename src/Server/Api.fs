@@ -19,6 +19,18 @@ let getDistanceFromLondon postcode next (ctx:HttpContext) = task {
         return! json { Postcode = postcode; Location = location; DistanceToLondon = (distanceToLondon / 1000.<meter>) } next ctx
     else return! invalidPostcode next ctx }
 
+let postDistanceFromLondon next (ctx:HttpContext) = task {
+
+    let! request = ctx.BindModelAsync<PostcodeRequest>()
+    let postcode = request.Postcode
+
+    if Validation.validatePostcode postcode then
+        let! location = getLocation postcode
+        let distanceToLondon = getDistanceBetweenPositions location.LatLong london
+        return! json { Postcode = postcode; Location = location; DistanceToLondon = (distanceToLondon / 1000.<meter>) } next ctx
+    else return! invalidPostcode next ctx }
+
+
 let getCrimeReport postcode next ctx = task {
     if Validation.validatePostcode postcode then
         let! location = getLocation postcode
@@ -49,6 +61,6 @@ let getWeather postcode next ctx = task {
 
 let apiRouter = scope {
     pipe_through (pipeline { set_header "x-pipeline-type" "Api" })
-    getf "/distance/%s" getDistanceFromLondon
+    post "/distance/" postDistanceFromLondon
     getf "/crime/%s" getCrimeReport
     getf "/weather/%s" getWeather }
