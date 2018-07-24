@@ -135,7 +135,10 @@ module ViewParts =
                     div [ ] [
                         Level.heading [ ] [
                             Image.image [ Image.Is128x128 ] [
-                                img [ Src(sprintf "https://www.metaweather.com/static/img/weather/%s.svg" weatherReport.WeatherType.Abbreviation) ]
+                                img [ 
+                                    Src(sprintf "https://www.metaweather.com/static/img/weather/%s.svg" weatherReport.WeatherType.Abbreviation) 
+                                    Title(weatherReport.WeatherType.Description)
+                                ]
                             ]
                         ]
                         Level.title [ ] [

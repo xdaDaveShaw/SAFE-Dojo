@@ -35,6 +35,10 @@ type WeatherType =
         match this with
         | Snow -> "sn" | Sleet -> "s" | Hail -> "h" | Thunder -> "t" | HeavyRain -> "hr"
         | LightRain -> "lr" | Showers -> "s" | HeavyCloud -> "hc" | LightCloud -> "lc" | Clear -> "c"
+    member this.Description =
+        match this with
+        | Snow -> "Snow" | Sleet -> "Sleet" | Hail -> "Hail" | Thunder -> "Thunder" | HeavyRain -> "Heavy rain"
+        | LightRain -> "Light rain" | Showers -> "Showers" | HeavyCloud -> "Heavy cloud" | LightCloud -> "Light cloud" | Clear -> "Clear"
 
 type WeatherResponse = { WeatherType : WeatherType; AverageTemperature : float }
 
